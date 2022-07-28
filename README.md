@@ -20,7 +20,8 @@ dockerize these containers
  $ docker-compose exec server npm list express  
   server@1.0.0 /usr/src/app  
   `-- express@4.18.1  
-
+ $ docker-compose exec mongo mongo --version  
+  MongoDB shell version v5.0.9  
 ## Feature
  - .env (contain enviroments key: value)
  - nginx/templets/*.conf.template (contains nginx variables)
