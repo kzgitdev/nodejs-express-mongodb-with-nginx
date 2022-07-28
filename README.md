@@ -15,6 +15,8 @@ dockerize these containers
  Docker version 20.10.17, build 100c701  
  $ docker-compose --version  
  Docker Compose version v2.6.1  
+ $ docker-compose exec server node --version  
+  v18.7.0  
  $ docker-compose exec server npm list express  
   server@1.0.0 /usr/src/app  
   `-- express@4.18.1  
