@@ -11,7 +11,10 @@ dockerize these containers
 ## Development enviromnent
  OS: Windows 10 64bit with wsl(Ubuntu 20.04 LTS)
  Docker Desptop v4.10.1
-
+ $ docker --version
+ Docker version 20.10.17, build 100c701
+ $ docker-compose --version
+ Docker Compose version v2.6.1
 
 ## Feature
  - .env (contain enviroments key: value)
