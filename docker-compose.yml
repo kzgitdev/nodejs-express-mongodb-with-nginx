@@ -1,0 +1,73 @@
+version: '3.9'
+
+services:
+  # revers proxy: nginx
+  nginx:
+    container_name: nginx
+    image: nginx:${NGINX_TAG}
+    # build:
+    #   context: ./nginx
+    #   dockerfile: Dockerfile
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - /etc/localtime:/etc/localtime:ro
+      - ./nginx/templates/default-80-node.conf.template:/etc/nginx/templates/default.conf.template
+    environment:
+      - NGINX_HOST=${DOMAIN}
+      # - NGINX_PORT=443
+      # - NGINX_APP_HOST=${COMPOSE_PROJECT_NAME}-app
+      - VIRTUAL_HOST=${DOMAIN}
+      - VIRTUAL_PORT=80
+    depends_on:
+      - server
+    # ports:
+    #   - 8080:80
+    expose:
+      - 80
+    networks:
+      - default
+      - proxy_default
+
+  # web server: nodejs server
+  server:
+    container_name: server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ./server/package.json:/usr/src/app/package.json
+      - ./server/server.js:/usr/src/app/server.js
+      # mongodb
+    depends_on:
+      - mongo
+    tty: true
+    ports:
+      - '8080:8080'
+    networks:
+      - default
+      - proxy_default
+
+  # database server: mongodb
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: username 
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: appdb
+    volumes:
+      - ./mongo/init.js:/docker-entrypoint-initdb.d/init.js:ro
+      - ./mongo/mongo-data:/data/db
+    # Start mongo with authentication enabled
+    command: [mongod, --auth]
+    ports:
+      - '27017:27017'
+    networks:
+      - default
+      - proxy_default
+
+networks:
+  default:
+  proxy_default:
+    external: true
